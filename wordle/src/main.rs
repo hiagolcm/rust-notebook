@@ -20,22 +20,28 @@ fn check(attempt: [char; 5], word: [char; 5]) -> [char; 5] {
     }
 
     for i in 0..5 {
-        let  letter = attempt[i];
+        let letter = attempt[i];
 
-        if result[i] ==  '🟩' { continue }
+        if result[i] == '🟩' {
+            continue;
+        }
 
-        result[i] = match hash_map.get(&letter) {
-                None => '🟥',
-                Some(&0) => '🟥',
-                _ => '🟨'
-            };
+        // Use get_mut to find the key and decrement it if we use it
+        result[i] = match hash_map.get_mut(&letter) {
+            None => '🟥',
+            Some(count) if *count == 0 => '🟥', // If we used them all up, it's red
+            Some(count) => {
+                *count -= 1; // Decrement the available count!
+                '🟨'
+            }
+        };
     }
 
     result
 }
 
 fn main() {
-    let word = ['h', 'i', 'a', 'g', 'r'];
-    let attempt = ['h', 'i', 'a', 'i', 'o'];
+    let word = ['a', 'p', 'p', 'l', 'e'];
+    let attempt = ['p', 'i', 'a', 'p', 'p'];
     println!("Result: {:?}", check(attempt, word));
 }
